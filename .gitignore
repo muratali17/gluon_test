@@ -20,3 +20,9 @@ Thumbs.db
 # Çevre Değişkenleri (Gizli Şifreler ve API Anahtarları)
 .env
 .env.local
+
+# veriler
+*.csv
+datasets/
+
+test/models/
