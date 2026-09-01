@@ -1,0 +1,22 @@
+# Sanal Ortamlar (Virtual Environments)
+.venv/
+venv/
+ENV/
+env/
+
+# Python Önbellek Dosyaları (Byte-compiled / optimized / DLL)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code ve Codespace Ayarları
+.vscode/
+.history/
+
+# İşletim Sistemi Kalıntıları
+.DS_Store
+Thumbs.db
+
+# Çevre Değişkenleri (Gizli Şifreler ve API Anahtarları)
+.env
+.env.local
