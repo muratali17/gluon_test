@@ -17,25 +17,21 @@ class AutoGluonML:
         self.predictor = None
         self.path = TRAINED_MODELS_DIR
 
-    def train(self, data, label, time_limit=300):
+    def train(self, data, label, time_limit=300, task_name="default_task"):
         train_data = data.sample(frac=0.8, random_state=42)
         self.test_data = data.drop(train_data.index)
 
-        self.predictor = TabularPredictor(label=label).fit(
+        # Doğrudan hedef path belirtilir
+        save_path = get_model_path(task_name)
+
+        self.predictor = TabularPredictor(label=label, path=save_path).fit(
             train_data=train_data,
             hyperparameters=HYPERPARAMETERS,
             time_limit=time_limit,
         )
         return self.predictor
 
-    def save_model(self, task_name):
-        if self.predictor is None:
-            raise RuntimeError("No predictor to save. Call train() first.")
-        self.path = get_model_path(task_name)
-        if os.path.exists(self.path):
-            shutil.rmtree(self.path)
-        shutil.copytree(self.predictor.path, self.path)
-        return self.path
+    
 
     def load(self, task_name):
         self.path = get_model_path(task_name)

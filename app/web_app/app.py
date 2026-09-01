@@ -38,10 +38,9 @@ if uploaded_file is not None:
         try:
             ag = AutoGluonML()
             with st.spinner("Training in progress..."):
-                ag.train(df, label=label, time_limit=time_limit)
-                model_path = ag.save_model(task_name)
+                ag.train(df, label=label, time_limit=time_limit,task_name=task_name)
 
-            st.success(f"Model saved to: {model_path}")
+            st.success(f"Model saved ")
 
             st.subheader("Leaderboard")
             leaderboard = ag.predictor.leaderboard(ag.test_data)

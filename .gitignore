@@ -27,3 +27,6 @@ datasets/
 
 test/models/
 trained_models/
+
+*_models/
+*Models/
