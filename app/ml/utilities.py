@@ -1,6 +1,6 @@
 import os
 
-TRAINED_MODELS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "trained_models")
+TRAINED_MODELS_DIR = os.path.join("/workspaces/gluon_test/app/ml/", "trained_models")
 
 
 def validate_task_name(task_name):

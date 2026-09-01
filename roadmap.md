@@ -37,12 +37,12 @@ Reusable training logic in `app/ml/` (pure Python, no Streamlit imports).
 - [x] `load(task_name)` and `predict(data)` on the class.
 - [x] `ml/__init__.py` exposes `AutoGluonML` + `TRAINED_MODELS_DIR`.
 
-## Phase 4 — Wire training into the UI (NEXT)
-- [ ] After upload: target label picker (dropdown of columns).
-- [ ] Task name text input.
-- [ ] Optional: time-limit control.
-- [ ] "Train" button → runs engine in a background thread, shows progress + spinner.
-- [ ] Display leaderboard table + model path after training.
+## Phase 4 — Wire training into the UI (DONE)
+- [x] `sys.path` fix in `app.py` so `web_app` can `import ml`.
+- [x] Target label picker (dropdown of columns).
+- [x] Task name text input + time-limit control.
+- [x] "Train" button → spinner → trains + saves model, shows leaderboard + model path.
+- [x] Tested end-to-end via Streamlit AppTest (upload titanic → train → saved).
 
 ## Phase 5 — Model management
 - [ ] List saved models in `trained_models/` (from Streamlit UI).

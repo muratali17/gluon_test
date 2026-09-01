@@ -9,7 +9,7 @@ and prediction).
   - `gluon_train.py` — basic `TabularPredictor(label=...).fit(train_data)`, evaluate + leaderboard. Saves to auto-generated `AutogluonModels/` path.
   - `gluon_hyperparameter.py` — fit with `hyperparameters` dict (GBM/CAT/XGB + single-tree RF) and `time_limit=300`.
   - `gluon_load.py` — loads a saved predictor from a hardcoded path and evaluates it.
-- `app/web_app/app.py` — Streamlit CSV **viewer** (upload + preview + dtypes). **Phase 1 (DONE)**. No ML wired in yet.
+- `app/web_app/app.py` — Streamlit app: CSV upload + preview/dtypes (**Phase 1**), plus training UI: target label picker, task name, time limit, Train button → trains + saves via `AutoGluonML`, shows leaderboard + model path (**Phase 4 DONE**). Uses `sys.path.insert` of `app/` root so it can `import ml`.
 - `app/ml/` — the ML engine, a Python package (`__init__.py` makes it importable as `ml`):
   - `auto_gluon_ml.py` — `AutoGluonML` class: `train(data, label, time_limit)`, `save_model(task_name)`, `load(task_name)`, `predict(data)`.
   - `utilities.py` — `validate_task_name()`, `get_model_path()`, `TRAINED_MODELS_DIR` constant.
@@ -45,5 +45,6 @@ and prediction).
 - Phase 1 (CSV upload + viewer): DONE.
 - Phase 2 (ML engine in `app/ml/`): DONE (train/save/load/predict + utilities, smoke-tested on titanic).
 - Phase 3 (load/predict wrappers for reuse): effectively done via `load()`/`predict()`; may formalize.
-- Phase 4 (wire training into Streamlit UI): NEXT.
+- Phase 4 (wire training into Streamlit UI): DONE — tested end-to-end with AppTest.
+- Phase 5 (model management: list/meta/delete in UI): NEXT.
 - See `roadmap.md` for the full plan.
