@@ -15,7 +15,7 @@ HYPERPARAMETERS = {
 class AutoGluonML:
     def __init__(self):
         self.predictor = None
-        self.path = None
+        self.path = TRAINED_MODELS_DIR
 
     def train(self, data, label, time_limit=300):
         train_data = data.sample(frac=0.8, random_state=42)
