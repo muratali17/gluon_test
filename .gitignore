@@ -26,3 +26,4 @@ Thumbs.db
 datasets/
 
 test/models/
+trained_models/
