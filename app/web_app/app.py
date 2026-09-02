@@ -13,7 +13,7 @@ st.set_page_config(page_title="AutoGluon Trainer", layout="wide")
 
 st.title("AutoGluon ML Trainer")
 
-tab_upload, tab_train, tab_saved = st.tabs(["Upload Data", "Train Model", "Saved Models"])
+tab_upload, tab_train, tab_predict = st.tabs(["Upload Data", "Train Model", "Predict"])
 
 with tab_upload:
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -70,7 +70,7 @@ with tab_train:
             except Exception as e:
                 st.error(f"Training failed: {e}")
 
-with tab_saved:
+with tab_predict:
     st.subheader("Saved Models")
 
     task_names = list_task_names()
