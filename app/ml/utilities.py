@@ -20,4 +20,13 @@ def remove_existing_model(task_name):
         shutil.rmtree(model_path)
 
 
+def list_task_names():
+    if not os.path.isdir(TRAINED_MODELS_DIR):
+        return []
+    return sorted(
+        entry for entry in os.listdir(TRAINED_MODELS_DIR)
+        if os.path.isdir(os.path.join(TRAINED_MODELS_DIR, entry))
+    )
+
+
 
