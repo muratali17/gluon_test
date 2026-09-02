@@ -30,20 +30,28 @@ if uploaded_file is not None:
     st.dataframe(df.dtypes.rename("dtype"))
 
     st.subheader("Training Configuration")
+
     label = st.selectbox("Target label", df.columns)
+
     task_name = st.text_input("Task name", value="task_finding_best_pipe")
+
     time_limit = st.number_input("Time limit (seconds)", min_value=10, value=300, step=10)
+
+    preset = st.selectbox("Preset", ["medium", "best"])
 
     if st.button("Train", type="primary"):
         try:
             ag = AutoGluonML()
             with st.spinner("Training in progress..."):
-                ag.train(df, label=label, time_limit=time_limit,task_name=task_name)
+                ag.train(df, label=label, time_limit=time_limit, task_name=task_name, presets=preset)
 
             st.success(f"Model saved ")
 
             st.subheader("Leaderboard")
             leaderboard = ag.predictor.leaderboard(ag.test_data)
             st.dataframe(leaderboard)
+
+            st.subheader("Feature Importance")
+            st.dataframe(ag.feature_importance(ag.test_data))
         except Exception as e:
             st.error(f"Training failed: {e}")

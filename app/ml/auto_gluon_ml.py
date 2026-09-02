@@ -2,7 +2,7 @@ from autogluon.tabular import TabularPredictor
 import os
 import shutil
 
-from ml.utilities import TRAINED_MODELS_DIR, get_model_path
+from ml.utilities import TRAINED_MODELS_DIR, get_model_path, remove_existing_model
 
 HYPERPARAMETERS = {
     'GBM': {},
@@ -24,19 +24,20 @@ class AutoGluonML:
         self.predictor = None
         self.path = TRAINED_MODELS_DIR
 
-    def train(self, data, label, time_limit=300, task_name="default_task"):
+    def train(self, data, label, time_limit=300, task_name="default_task",presets="medium"):
         train_data = data.sample(frac=0.8, random_state=42)
         self.test_data = data.drop(train_data.index)
 
         # Doğrudan hedef path belirtilir
         save_path = get_model_path(task_name)
+        remove_existing_model(task_name)
 
         self.predictor = TabularPredictor(label=label, path=save_path).fit(
             train_data=train_data,
             #excluded_model_types = EXCLUDED_MODEL_TYPES,
             hyperparameters=HYPERPARAMETERS,
             time_limit=time_limit,
-            presets="best",
+            presets=presets,
         )
         return self.predictor
 
@@ -51,3 +52,6 @@ class AutoGluonML:
         if self.predictor is None:
             raise RuntimeError("No predictor loaded. Call train() or load() first.")
         return self.predictor.predict(data)
+
+    def feature_importance(self, data):
+        return self.predictor.feature_importance(data)
