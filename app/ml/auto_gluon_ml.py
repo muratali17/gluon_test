@@ -8,8 +8,15 @@ HYPERPARAMETERS = {
     'GBM': {},
     'CAT': {},
     'XGB': {},
-    'RF': [{'n_estimators': 1}],
 }
+
+# EXCLUDED_MODEL_TYPES=[
+#         'NN_TORCH',  # PyTorch Neural Net
+#         'FASTAI',    # FastAI Neural Net
+#         'KNN',       # K-Nearest Neighbors
+#         'XT',        # Extra Trees
+#         'LR',        # Linear Regression / Logistic Regression
+#     ]
 
 
 class AutoGluonML:
@@ -26,8 +33,10 @@ class AutoGluonML:
 
         self.predictor = TabularPredictor(label=label, path=save_path).fit(
             train_data=train_data,
+            #excluded_model_types = EXCLUDED_MODEL_TYPES,
             hyperparameters=HYPERPARAMETERS,
             time_limit=time_limit,
+            presets="best",
         )
         return self.predictor
 
