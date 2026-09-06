@@ -26,7 +26,7 @@ Thumbs.db
 datasets/
 
 test/models/
-trained_models/
+app/ml/trained_models/*
 
 *_models/
 *Models/
