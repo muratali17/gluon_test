@@ -78,4 +78,15 @@ with tab_predict:
     if not task_names:
         st.info("No saved models found.")
     else:
-        st.selectbox("Select a saved model", task_names)
+        selected_model = st.selectbox("Select a saved model", task_names)
+
+        if st.button("Load Model", type="primary"):
+            try:
+                ag = AutoGluonML()
+                with st.spinner("Loading model..."):
+                    ag.load(selected_model)
+                st.session_state.loaded_model = selected_model
+                st.session_state.ag = ag
+                st.success(f"Model '{selected_model}' loaded.")
+            except Exception as e:
+                st.error(f"Failed to load model: {e}")
