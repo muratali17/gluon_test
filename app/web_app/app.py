@@ -2,6 +2,7 @@ import os
 import sys
 
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -66,7 +67,18 @@ with tab_train:
                 st.dataframe(leaderboard)
 
                 st.subheader("Feature Importance")
-                st.dataframe(ag.feature_importance(ag.test_data))
+                fi = ag.feature_importance(ag.test_data)
+                st.dataframe(fi)
+
+                importance = fi["importance"].sort_values()
+                fig = px.bar(
+                    x=importance.values,
+                    y=importance.index,
+                    orientation="h",
+                    labels={"x": "Importance", "y": "Feature"},
+                    title="Feature Importance Chart",
+                )
+                st.plotly_chart(fig, use_container_width=True)
             except Exception as e:
                 st.error(f"Training failed: {e}")
 
@@ -129,13 +141,30 @@ with tab_predict:
                     else:
                         row[col] = st.text_input(col, value=str(default) if default is not None else "")
 
-                if st.form_submit_button("Predict"):
-                    try:
-                        input_df = pd.DataFrame([row], columns=features)
-                        prediction = ag.predict(input_df)
-                        st.success(f"Predicted {label}: {prediction.iloc[0]}")
-                    except Exception as e:
-                        st.error(f"Prediction failed: {e}")
+                submitted = st.form_submit_button("Predict")
+
+            if submitted:
+                try:
+                    input_df = pd.DataFrame([row], columns=features)
+                    prediction = ag.predict(input_df)
+                    st.success(f"Predicted {label}: {prediction.iloc[0]}")
+
+                    result = input_df.copy()
+                    result[label] = prediction
+                    st.session_state.single_result = result
+                except Exception as e:
+                    st.error(f"Prediction failed: {e}")
+
+            if "single_result" in st.session_state:
+                st.subheader("Result")
+                st.dataframe(st.session_state.single_result)
+
+                st.download_button(
+                    "Download prediction",
+                    st.session_state.single_result.to_csv(index=False).encode("utf-8"),
+                    file_name="prediction.csv",
+                    mime="text/csv",
+                )
 
         else:
             uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"], key="predict_csv")
