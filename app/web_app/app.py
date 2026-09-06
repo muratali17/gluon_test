@@ -90,3 +90,86 @@ with tab_predict:
                 st.success(f"Model '{selected_model}' loaded.")
             except Exception as e:
                 st.error(f"Failed to load model: {e}")
+
+    if "ag" in st.session_state:
+        ag = st.session_state.ag
+        st.subheader(f"Predict with '{st.session_state.loaded_model}'")
+
+        label = ag.predictor.label
+        features = ag.predictor.features()
+        type_map = ag.predictor.feature_metadata_in.get_type_group_map_raw()
+
+        int_cols = type_map.get("int", [])
+        float_cols = type_map.get("float", [])
+
+        mode = st.radio(
+            "Prediction mode",
+            ["Single prediction", "Batch prediction (upload CSV)"],
+        )
+
+        if mode == "Single prediction":
+            st.markdown(f"Enter one row of data to predict **{label}**.")
+
+            sample = ag.sample_row
+            if sample is not None:
+                st.caption("Prefilled with a sample row from the training data.")
+
+            with st.form("single_prediction_form"):
+                row = {}
+                for col in features:
+                    if sample is not None and col in sample.index and not pd.isna(sample[col]):
+                        default = sample[col]
+                    else:
+                        default = None
+
+                    if col in int_cols:
+                        row[col] = st.number_input(col, step=1, value=int(default) if default is not None else 0)
+                    elif col in float_cols:
+                        row[col] = st.number_input(col, value=float(default) if default is not None else 0.0)
+                    else:
+                        row[col] = st.text_input(col, value=str(default) if default is not None else "")
+
+                if st.form_submit_button("Predict"):
+                    try:
+                        input_df = pd.DataFrame([row], columns=features)
+                        prediction = ag.predict(input_df)
+                        st.success(f"Predicted {label}: {prediction.iloc[0]}")
+                    except Exception as e:
+                        st.error(f"Prediction failed: {e}")
+
+        else:
+            uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"], key="predict_csv")
+
+            if uploaded_file is not None:
+                try:
+                    predict_df = pd.read_csv(uploaded_file)
+                except Exception as e:
+                    st.error(f"Failed to read the CSV file: {e}")
+                    st.stop()
+
+                st.subheader("Uploaded Data")
+                st.dataframe(predict_df)
+
+                if st.button("Predict"):
+                    try:
+                        input_df = (
+                            predict_df.drop(columns=[label])
+                            if label in predict_df.columns
+                            else predict_df
+                        )
+                        predictions = ag.predict(input_df)
+
+                        result = input_df.copy()
+                        result[label] = predictions
+
+                        st.subheader("Predictions")
+                        st.dataframe(result)
+
+                        st.download_button(
+                            "Download predictions",
+                            result.to_csv(index=False).encode("utf-8"),
+                            file_name="predictions.csv",
+                            mime="text/csv",
+                        )
+                    except Exception as e:
+                        st.error(f"Prediction failed: {e}")

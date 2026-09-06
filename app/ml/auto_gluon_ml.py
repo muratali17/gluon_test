@@ -2,6 +2,8 @@ from autogluon.tabular import TabularPredictor
 import os
 import shutil
 
+import pandas as pd
+
 from ml.utilities import TRAINED_MODELS_DIR, get_model_path, remove_existing_model
 
 HYPERPARAMETERS = {
@@ -39,6 +41,9 @@ class AutoGluonML:
             time_limit=time_limit,
             presets=presets,
         )
+
+        train_data.iloc[[0]].to_csv(os.path.join(save_path, "sample_row.csv"), index=False)
+
         return self.predictor
 
     
@@ -46,6 +51,8 @@ class AutoGluonML:
     def load(self, task_name):
         self.path = get_model_path(task_name)
         self.predictor = TabularPredictor.load(self.path)
+        sample_path = os.path.join(self.path, "sample_row.csv")
+        self.sample_row = pd.read_csv(sample_path).iloc[0] if os.path.exists(sample_path) else None
         return self.predictor
 
     def predict(self, data):
